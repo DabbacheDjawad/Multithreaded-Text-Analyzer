@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane fx:controller="com.example.text_analyzer.HelloController"
+            xmlns:fx="http://javafx.com/fxml"
+            prefWidth="1000" prefHeight="640">
+
+    <top>
+        <HBox spacing="10" style="-fx-background-color: linear-gradient(#f7f9fb, #e9eef6);
+                                  -fx-border-color: transparent transparent #dbe3ec transparent;">
+            <padding>
+                <Insets top="12" right="12" bottom="12" left="12"/>
+            </padding>
+            <Label text="Text Analyzer"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnLoad" text="Load Files" onAction="#onLoadFiles"/>
+            <Button fx:id="btnRemove" text="Remove Selected" onAction="#onRemoveSelected"/>
+            <Button fx:id="btnAnalyze" text="Start Analysis" onAction="#onStartAnalysis"/>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.34">
+            <ListView fx:id="fileListView" prefWidth="360"/>
+            <VBox spacing="8">
+                <padding>
+                    <Insets top="12" right="12" bottom="12" left="12"/>
+                </padding>
+                <Label text="Preview"/>
+                <TextArea fx:id="previewArea" wrapText="true" editable="false" VBox.vgrow="ALWAYS"/>
+                <Label text="Results"/>
+                <TableView fx:id="resultsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colMetric" text="Metric" prefWidth="160"/>
+                        <TableColumn fx:id="colValue" text="Value" prefWidth="240"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </SplitPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" style="-fx-background-color: linear-gradient(#ffffff, #f4f7fb);
+                                 -fx-border-color: #dbe3ec; -fx-border-width: 1 0 0 0;">
+            <padding>
+                <Insets top="12" right="12" bottom="12" left="12"/>
+            </padding>
+            <Label fx:id="statusLabel" text="Ready"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ProgressBar fx:id="overallProgress" prefWidth="200"/>
+        </HBox>
+    </bottom>
+</BorderPane>
