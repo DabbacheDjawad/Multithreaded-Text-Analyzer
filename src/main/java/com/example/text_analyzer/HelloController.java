@@ -7,6 +7,9 @@ import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 public class HelloController {
@@ -38,6 +41,7 @@ public class HelloController {
                 new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.md", "*.log")
         );
 
+        //adding files
         List<File> chosen = fc.showOpenMultipleDialog(null);
         if (chosen != null) {
             for (File file : chosen) {
@@ -45,10 +49,37 @@ public class HelloController {
                     files.add(file.getAbsolutePath());
                 }
             }
+            //updating ui state after adding buttons
             btnAnalyze.setDisable(files.isEmpty());
             statusLabel.setText("Loaded " + files.size() + " file(s)");
+
+            //initial preview
+            if (!files.isEmpty()) {
+                String first = files.get(0);
+                fileListView.getSelectionModel().select(first);
+                try {
+                    String content = Files.readString(Path.of(first));
+                    previewArea.setText(content);
+                } catch (IOException e) {
+                    previewArea.setText("Cannot load file preview.");
+                }
+
+                //listener
+                fileListView.getSelectionModel().selectedItemProperty().addListener((obs, oldFile, newFile) -> {
+                    if (newFile != null) {
+                        try {
+                            String content = Files.readString(Path.of(newFile));
+                            previewArea.setText(content);
+                        } catch (IOException e) {
+                            previewArea.setText("Cannot load file preview.");
+                        }
+                    }
+                });
+            }
         }
     }
+
+
 
     @FXML
     private void onRemoveSelected() {
@@ -66,7 +97,7 @@ public class HelloController {
         overallProgress.setProgress(0);
     }
 
-    // helper record for the empty table — optional placeholder
+
     public static class TableEntry {
         private final String metric;
         private final String value;
