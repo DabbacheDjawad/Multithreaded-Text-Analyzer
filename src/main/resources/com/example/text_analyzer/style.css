@@ -1,10 +1,4 @@
-/* --- Root Styling --- */
-.root {
-    -fx-font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-    -fx-background-color: #fafcff;
-}
 
-/* --- Buttons --- */
 .button {
     -fx-background-color: linear-gradient(to bottom, #4f9eed, #1f77d3);
     -fx-text-fill: white;
@@ -12,7 +6,6 @@
     -fx-background-radius: 8;
     -fx-padding: 6 14 6 14;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 2, 0, 0, 1);
     -fx-border-color: transparent;
     -fx-border-width: 0;
     -fx-transition: all 0.2s ease-in-out;
@@ -24,11 +17,18 @@
     -fx-scale-y: 1.03;
 }
 
+#btnLoad{
+    -fx-background-color : green;
+}
+
+#btnRemove{
+    -fx-background-color : red;
+}
+
 .button:pressed {
     -fx-background-color: linear-gradient(to bottom, #1f77d3, #4f9eed);
 }
 
-/* --- Labels --- */
 .label {
     -fx-text-fill: #333;
     -fx-font-size: 14px;
@@ -40,7 +40,6 @@
     -fx-text-fill: #1f77d3;
 }
 
-/* --- ListView --- */
 .list-view {
     -fx-background-color: #ffffff;
     -fx-border-color: #dbe3ec;
@@ -58,7 +57,6 @@
     -fx-background-color: #e6f0ff;
 }
 
-/* --- TextArea --- */
 .text-area {
     -fx-background-color: #ffffff;
     -fx-border-color: #dbe3ec;
@@ -68,7 +66,6 @@
     -fx-focus-color: #1f77d3;
 }
 
-/* --- TableView --- */
 .table-view {
     -fx-border-color: #dbe3ec;
     -fx-border-radius: 6;
@@ -82,7 +79,6 @@
     -fx-text-fill: #1f77d3;
 }
 
-/* --- ProgressBar --- */
 .progress-bar {
     -fx-accent: #1f77d3;
     -fx-background-insets: 0;
@@ -90,21 +86,7 @@
     -fx-padding: 2;
 }
 
-/* --- SplitPane Divider --- */
-.split-pane .divider {
-    -fx-background-color: #dbe3ec;
-}
-
-/* --- HBox / VBox spacing --- */
 .hbox, .vbox {
     -fx-spacing: 8;
 }
 
-/* --- Scrollbars --- */
-.scroll-bar:vertical {
-    -fx-background-color: transparent;
-}
-
-.scroll-bar:horizontal {
-    -fx-background-color: transparent;
-}

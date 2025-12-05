@@ -2,6 +2,7 @@ package com.example.text_analyzer;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 public class HelloController {
 
@@ -31,6 +33,23 @@ public class HelloController {
     public void initialize() {
         fileListView.setItems(files);
         btnAnalyze.setDisable(true);
+
+        colMetric.setCellValueFactory(data ->
+                new javafx.beans.property.SimpleStringProperty(data.getValue().getMetric()));
+
+        colValue.setCellValueFactory(data ->
+                new javafx.beans.property.SimpleStringProperty(data.getValue().getValue()));
+
+        // Preview listener (only added once)
+        fileListView.getSelectionModel().selectedItemProperty().addListener((obs, oldFile, newFile) -> {
+            if (newFile != null) {
+                try {
+                    previewArea.setText(Files.readString(Path.of(newFile)));
+                } catch (IOException e) {
+                    previewArea.setText("Cannot load file preview.");
+                }
+            }
+        });
     }
 
     @FXML
@@ -38,48 +57,26 @@ public class HelloController {
         FileChooser fc = new FileChooser();
         fc.setTitle("Select text files");
         fc.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.md", "*.log")
+                new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.md")
         );
 
-        //adding files
         List<File> chosen = fc.showOpenMultipleDialog(null);
+
         if (chosen != null) {
             for (File file : chosen) {
                 if (!files.contains(file.getAbsolutePath())) {
                     files.add(file.getAbsolutePath());
                 }
             }
-            //updating ui state after adding buttons
+
             btnAnalyze.setDisable(files.isEmpty());
             statusLabel.setText("Loaded " + files.size() + " file(s)");
 
-            //initial preview
             if (!files.isEmpty()) {
-                String first = files.get(0);
-                fileListView.getSelectionModel().select(first);
-                try {
-                    String content = Files.readString(Path.of(first));
-                    previewArea.setText(content);
-                } catch (IOException e) {
-                    previewArea.setText("Cannot load file preview.");
-                }
-
-                //listener
-                fileListView.getSelectionModel().selectedItemProperty().addListener((obs, oldFile, newFile) -> {
-                    if (newFile != null) {
-                        try {
-                            String content = Files.readString(Path.of(newFile));
-                            previewArea.setText(content);
-                        } catch (IOException e) {
-                            previewArea.setText("Cannot load file preview.");
-                        }
-                    }
-                });
+                fileListView.getSelectionModel().select(0); // select first file
             }
         }
     }
-
-
 
     @FXML
     private void onRemoveSelected() {
@@ -88,23 +85,61 @@ public class HelloController {
             files.remove(selected);
             statusLabel.setText("Removed " + selected);
             btnAnalyze.setDisable(files.isEmpty());
+            previewArea.clear();
         }
     }
 
     @FXML
     private void onStartAnalysis() {
-        statusLabel.setText("Analysis will start here (next sprint).");
-        overallProgress.setProgress(0);
+        String selected = fileListView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            statusLabel.setText("No file selected.");
+            return;
+        }
+
+        statusLabel.setText("Analyzing...");
+        resultsTable.getItems().clear();
+        overallProgress.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+
+        Task<Map<String, String>> task = new Task<>() {
+            @Override
+            protected Map<String, String> call() throws Exception {
+                String content = Files.readString(Path.of(selected));
+                Thread.sleep(800); // just to show animation
+                return TextAnalyzer.analyze(content);
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            overallProgress.setProgress(1);
+            statusLabel.setText("Analysis complete");
+
+            Map<String, String> res = task.getValue();
+            res.forEach((k, v) -> resultsTable.getItems().add(new TableEntry(k, v)));
+        });
+
+        task.setOnFailed(e -> {
+            overallProgress.setProgress(0);
+            statusLabel.setText("Error processing file.");
+        });
+
+        // ❌ WRONG: new Thread(String.valueOf(task)).start();
+        // ✔️ CORRECT:
+        new Thread(task).start();
     }
 
-
+    // ---------------------------
+    // TABLE DATA CLASS
+    // ---------------------------
     public static class TableEntry {
         private final String metric;
         private final String value;
+
         public TableEntry(String metric, String value) {
             this.metric = metric;
             this.value = value;
         }
+
         public String getMetric() { return metric; }
         public String getValue() { return value; }
     }
