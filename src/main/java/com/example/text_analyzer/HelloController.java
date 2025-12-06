@@ -86,6 +86,7 @@ public class HelloController {
             statusLabel.setText("Removed " + selected);
             btnAnalyze.setDisable(files.isEmpty());
             previewArea.clear();
+            resultsTable.getItems().clear();
         }
     }
 
@@ -123,14 +124,9 @@ public class HelloController {
             statusLabel.setText("Error processing file.");
         });
 
-        // ❌ WRONG: new Thread(String.valueOf(task)).start();
-        // ✔️ CORRECT:
         new Thread(task).start();
     }
 
-    // ---------------------------
-    // TABLE DATA CLASS
-    // ---------------------------
     public static class TableEntry {
         private final String metric;
         private final String value;
