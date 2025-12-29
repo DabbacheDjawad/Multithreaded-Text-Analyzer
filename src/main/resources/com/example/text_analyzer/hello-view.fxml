@@ -20,6 +20,8 @@
             <Button fx:id="btnLoad" text="Load Files" onAction="#onLoadFiles"/>
             <Button fx:id="btnRemove" text="Remove Selected" onAction="#onRemoveSelected"/>
             <Button fx:id="btnAnalyze" text="Start Analysis" onAction="#onStartAnalysis"/>
+            <Button fx:id="btnShowAll" text="Show All Results" onAction="#onShowAllResults"/>
+
         </HBox>
     </top>
 
@@ -35,10 +37,12 @@
                 <Label text="Results"/>
                 <TableView fx:id="resultsTable" VBox.vgrow="ALWAYS">
                     <columns>
+                        <TableColumn fx:id="colFile" text="File" prefWidth="200"/>
                         <TableColumn fx:id="colMetric" text="Metric" prefWidth="160"/>
                         <TableColumn fx:id="colValue" text="Value" prefWidth="240"/>
                     </columns>
                 </TableView>
+
             </VBox>
         </SplitPane>
     </center>

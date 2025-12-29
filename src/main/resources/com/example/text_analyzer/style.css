@@ -11,6 +11,15 @@
     -fx-transition: all 0.2s ease-in-out;
 }
 
+.table-row-cell:filled:selected {
+    -fx-background-color: #e6f0ff;
+}
+
+.table-cell {
+    -fx-padding: 8;
+}
+
+
 .button:hover {
     -fx-opacity: 0.85;
     -fx-scale-x: 1.03;
@@ -23,6 +32,10 @@
 
 #btnRemove{
     -fx-background-color : red;
+}
+
+#btnShowAll{
+    -fx-background-color : #777C6D;
 }
 
 .button:pressed {
