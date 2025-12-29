@@ -29,13 +29,16 @@ public class TextAnalyzer {
         int totalWords = tokens.length;
         result.put("Total Words", String.valueOf(totalWords));
 
+        //removes duplicates
         Set<String> uniqueSet = new HashSet<>(Arrays.asList(tokens));
         result.put("Unique Words", String.valueOf(uniqueSet.size()));
 
         // FREQUENCY MAP
+        //returns a hasmap of every word in the text and the number of occurences
         Map<String, Integer> freq = new HashMap<>();
         for (String w : tokens) {
             if (!w.isBlank()) {
+                //get value or return default
                 freq.put(w, freq.getOrDefault(w, 0) + 1);
             }
         }
@@ -60,6 +63,7 @@ public class TextAnalyzer {
         result.put("Sentence Count", String.valueOf(sentences.length));
 
         // AVERAGE WORD LENGTH
+        //converts each word to its length in the same array then add it all together
         int totalLength = Arrays.stream(tokens).mapToInt(String::length).sum();
         double avgLen = totalWords == 0 ? 0 : (double) totalLength / totalWords;
         result.put("Average Word Length", String.format("%.2f", avgLen));
@@ -68,6 +72,7 @@ public class TextAnalyzer {
         String longest = "-", shortest = "-";
         for (String w : tokens) {
             if (!w.isBlank()) {
+                //about the 1st iteration(if the longest is still "-" set the next non empyy word as the longest )
                 if (longest.equals("-") || w.length() > longest.length()) longest = w;
                 if (shortest.equals("-") || w.length() < shortest.length()) shortest = w;
             }
@@ -77,6 +82,7 @@ public class TextAnalyzer {
         result.put("Shortest Word", shortest);
 
         // TOP 5 WORDS
+        //get the hashset->stream it->sort it->take only the first 5 elements->transform the result into strings->combine it in one comma-separated string
         String top5 =
                 freq.entrySet()
                         .stream()
