@@ -1,5 +1,6 @@
 package com.example.text_analyzer;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -7,7 +8,9 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class HelloController {
 
+    @FXML private BorderPane border_pane;
     @FXML private Button btnLoad;
     @FXML private Button btnRemove;
     @FXML private Button btnShowAll;
@@ -58,6 +62,13 @@ public class HelloController {
 
     @FXML
     public void initialize() {
+        Platform.runLater(() -> {
+            // Get the window (Stage) and listen for the close request
+            Stage stage = (Stage) border_pane.getScene().getWindow();
+            stage.setOnCloseRequest(event -> {
+                executor.shutdownNow(); // Kills the threads immediately
+            });
+        });
         fileListView.setItems(files);
         btnAnalyze.setDisable(true);
         btnShowAll.disableProperty().bind(
@@ -133,14 +144,17 @@ public class HelloController {
     }
 
     @FXML
-    private void onRemoveSelected() {
+    private void onRemoveSelected() throws IOException {
         String selected = fileListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
+            if(files.size()==1) resultsTable.getItems().clear();
             files.remove(selected);
             statusLabel.setText("Removed " + selected);
             btnAnalyze.setDisable(files.isEmpty());
             previewArea.clear();
+            analysisCache.remove(selected);
         }
+        if(files.size()==1) previewArea.setText(Files.readString(Path.of(fileListView.getSelectionModel().getSelectedItem().toString())));
     }
 
     @FXML
